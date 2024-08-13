@@ -1,15 +1,4 @@
-Certainly! Here’s an even more detailed and expanded summary that deeply integrates the ROCm Profiler SDK documentation with the key points discussed in the meeting:
-
-### Comprehensive Meeting Outline with In-Depth ROCm Profiler SDK References
-
----
-
-#### **1. Introduction**
-- **Speaker**: Paltashev Timour
-- **Discussion Points**:
-  - The meeting kicked off with an introduction to the L3 slides that were prepared to illustrate the usage of hardware counters within the ROCm environment. These slides aimed to provide a visual guide to the intricacies of performance profiling on AMD GPUs.
-  - The session was interrupted by technical issues, particularly related to recent updates in Visual Studio Code, which impacted the ability to navigate through the content. The instability highlighted the challenges of maintaining a consistent development environment when dealing with complex profiling tools.
-  
+#### **1. Introduction
 - **SDK Documentation Reference**:
   - **ROCprofiler Overview**: The introductory section of the ROCm Profiler SDK documentation emphasizes the importance of ROCprofiler as a tool for gathering detailed hardware performance counters. This reference is foundational for understanding the scope and utility of ROCm’s profiling capabilities, setting the stage for the technical discussions that followed.
 
