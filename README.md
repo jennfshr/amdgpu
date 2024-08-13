@@ -2,101 +2,111 @@
 ## Working Group 2:00 - 3:30 p Tuesday, August 13, 2024
 ### AMD GPU Working Session
 
----
-#### **1. Introduction
-- **SDK Documentation Reference**:
-  - **ROCprofiler Overview**: The introductory section of the ROCm Profiler SDK documentation emphasizes the importance of ROCprofiler as a tool for gathering detailed hardware performance counters. This reference is foundational for understanding the scope and utility of ROCm’s profiling capabilities, setting the stage for the technical discussions that followed.
+1. Introduction and Setup
+        Primary Participants:
+            Ben Welton, Timour Paltashev, John Mellor-Crummey, Kevin Huck
+        Goal of the Session:
+            Walkthrough of a sample included in rocprofiler 6.2.
+            Primary focus on demonstrating how to collect hardware counters using buffered tracing methods.
 
----
+3. In-Depth Discussion on Counter Collection Setup
 
-#### **2. Technical Discussion on Rocprofiler SDK**
-- **Topics Covered**:
-  - The discussion began with an in-depth exploration of the significant changes introduced in Rocprofiler SDK version 6.2. This version brought substantial improvements, particularly in how hardware counters are collected and processed.
-  
-  - **Buffered Tracing vs. Callback Collection**: 
-    - **Buffered Tracing**: The team discussed how buffered tracing accumulates performance data into a buffer over time, which is then processed post-execution. This method is particularly useful for long-running applications where performance needs to be monitored continuously without affecting runtime performance.
-    - **Callback Collection**: This method was explored as an alternative to buffered tracing, where data collection is triggered at specific points in the application’s execution. Callback collection is advantageous for pinpointing performance issues at critical junctures, such as during specific kernel executions or memory transfers.
+    Rocprofiler Versions Comparison:
+        Version 1/2 vs. Version 6.2:
+            Earlier versions offered a more rigid structure, limiting flexibility in counter collection.
+            The latest version (6.2) is highlighted for its modular approach, allowing dynamic counter selection and enhanced compatibility with newer GPU architectures.
+        Simplified Counter Collection Process:
+            Version 6.2's design simplifies the process of setting up and collecting hardware counters.
+            Improved API allows for more precise data retrieval, crucial for optimizing application performance on AMD GPUs.
+    Implementation in C++ Profiling Tools:
+        Detailed discussion on integrating ROCm profiling capabilities into C++ tools.
+        Focus on code modifications required to leverage the new features in version 6.2.
+    Technical Hurdles:
+        Specific mention of a participant facing issues with data reading.
+        Timour’s guidance on how to modify the code to overcome these challenges.
+        Querying counters based on the availability of GPU agents, ensuring accurate profiling in multi-GPU environments.
 
-  - **Comparison of SDK Versions**:
-    - **Version 1 and 2**: These earlier versions of the Rocprofiler SDK had a more static and rigid API structure. They provided limited flexibility in terms of the counters available and the methods for data collection.
-    - **Current Version (6.2)**: The current version was highlighted as a significant improvement, offering a more modular and flexible approach. The introduction of dynamic counter selection and better support for newer GPU architectures allows for more tailored and precise performance profiling. This version also includes enhanced documentation and tooling support, making it easier for developers to integrate profiling into their workflows.
+4. Detailed Examination of Technical Challenges and Solutions
 
-- **SDK Documentation Reference**:
-  - **Version History**: The SDK documentation’s version history section offers a chronological overview of the enhancements made in each version. This includes a detailed log of new features, API changes, and deprecations, providing a comprehensive background that aligns with the meeting’s discussions about the evolution of the profiling tool.
+    Handling Counter Collection Issues:
+        Per-Architecture Counter Handling:
+            Discussion on how the latest rocprofiler versions manage counters specific to different GPU architectures.
+            Emphasis on the ability to map counter data directly to hardware features, improving data accuracy.
+        Introduction of Unique Counter IDs:
+            Explanation of how unique counter IDs simplify referencing across various GPU models.
+            The role of these IDs in maintaining consistency in performance data collection.
+    Software and Code Execution Issues:
+        Detailed recount of the delays caused by software update issues, particularly with VS Code.
+        Strategies discussed for overcoming these obstacles, ensuring the session's continuity.
 
----
+5. Rocprofiler SDK Overview and Changes
 
-#### **3. Implementation Details**
-- **Key Points**:
-  - **Application of Functions Across Agents**:
-    - The meeting covered the technical process of applying profiling functions across multiple GPU agents. Each GPU agent represents a distinct computational unit within a multi-GPU system, and the ability to distribute profiling tasks across these agents is critical for capturing accurate and comprehensive performance data.
-  
-  - **Setting Up Counter Queries**:
-    - Detailed explanations were provided on setting up queries for hardware counters. The queries need to be carefully crafted to target specific performance metrics, such as memory bandwidth, computational throughput, or cache utilization. The Rocprofiler SDK’s current version simplifies this process by allowing developers to dynamically select and configure counters based on the specific needs of their application.
+    Philosophical Shift in the SDK:
+        Counter Dimensionality:
+            Introduction of dimensions in the latest SDK version to map counter data more accurately to hardware components.
+            Acknowledgment of the shift from summarizing data across different compute units (CUs) to more granular data representation.
+        Benefits of the New Approach:
+            Discussion on the enhanced ability to correlate counter data with specific hardware features, leading to better performance tuning.
+            The significance of these changes in providing developers with deeper insights into GPU performance.
 
-  - **Structural Changes in Counter Handling**:
-    - The introduction of unique counter IDs in the SDK was a focal point of the discussion. These IDs allow for consistent reference to specific counters across different GPU architectures, simplifying the process of querying and interpreting performance data. This is especially important in environments where multiple generations of GPUs might be in use.
+6. Implementation and Tool Initialization Details
 
-  - **Counter Dimensionality**:
-    - The concept of counter dimensionality was explored in depth. In the context of GPU performance profiling, dimensionality refers to the multiple layers of data that a single counter might represent. For example, a counter might track performance at the per-core level, per-SIMD (Single Instruction, Multiple Data) unit, or across the entire GPU. Understanding and accurately mapping these dimensions to the hardware is essential for meaningful performance analysis.
+    ROCprofiler Tool Initialization:
+        Tool Initialization Process:
+            Step-by-step overview of initializing tools with the rocprofiler SDK.
+            Key focus on the tool_init function, which serves as the entry point for setting up profiling tools.
+        Context and Buffer Creation:
+            Detailed discussion on how to create contexts and buffers for collecting profiling data.
+            Importance of specifying callback information during initialization to ensure accurate data collection.
+    Environment Variables and Their Role:
+        ROCR_VISIBLE_DEVICES:
+            In-depth explanation of the ROCR_VISIBLE_DEVICES environment variable and its impact on GPU visibility.
+            Discussion on how this variable influences which GPUs are profiled, especially in multi-GPU systems.
+        Challenges with GPU Selection:
+            Exploration of potential issues arising from improper use of environment variables, such as profiling on inactive GPUs.
+            Proposed strategies to avoid resource conflicts and ensure profiling is focused on the correct GPUs.
 
-- **SDK Documentation Reference**:
-  - **Counter Query API**: The API documentation provides an exhaustive guide on how to set up and execute counter queries. It details the functions available for managing and retrieving performance data, emphasizing the flexibility introduced in the latest SDK version.
-  - **Agent-Specific Profiling**: This section offers insights into how to apply profiling functions to specific agents, allowing for targeted data collection in complex multi-GPU environments. The documentation includes examples and best practices that align with the implementation details discussed in the meeting.
+7. Agent Configuration and Visibility Management
 
----
+    Managing GPU Agents:
+        Detailed exploration of configuring and managing multiple GPU agents within the profiling environment.
+        Importance of ensuring that only the relevant GPUs are visible and active during profiling sessions.
+    Filtering and Visibility Solutions:
+        Proposed solution of adding a visibility field in the device structure to indicate which GPUs are accessible to rocprofiler.
+        Discussion on potential callbacks in the SDK to manage device visibility after initialization.
+        The team explored options to address visibility management issues to prevent conflicts in multi-GPU setups.
 
-#### **4. Code Walkthrough**
-- **Focus Areas**:
-  - **Code Adjustments**:
-    - Timour provided a walkthrough of recent code adjustments made to enhance the application of profiling functions across multiple agents. These adjustments were necessary to accommodate the new features and structural changes introduced in the Rocprofiler SDK version 6.2.
-  
-  - **Counter Dimensionality Mapping**:
-    - A key part of the walkthrough involved explaining how counters are mapped to specific hardware features within the GPU. This process is crucial for ensuring that the data collected is both accurate and relevant to the performance metrics of interest. The meeting emphasized the need for developers to thoroughly understand this mapping to effectively interpret the profiling results.
+8. Handling Multi-tool and Device Management
 
-- **SDK Documentation Reference**:
-  - **Sample Code and Tutorials**: The SDK documentation includes a wealth of sample code and tutorials that demonstrate how to implement profiling in various scenarios. These resources are invaluable for developers looking to understand the practical applications of the concepts discussed in the meeting, particularly in relation to multi-agent profiling and counter dimensionality.
+    Managing Multiple Tools:
+        In-depth discussion on the complexities of handling multiple tools within the rocprofiler environment.
+        Importance of proper context setup to avoid data corruption when using multiple profiling tools simultaneously.
+    Counter Collection and PC Sampling:
+        Exploration of the impact of clock gating on counter collection and PC sampling.
+        Detailed analysis of how these operations might interfere with each other and potential solutions to mitigate this.
 
----
+9. Power Management and Clock Gating
 
-#### **5. Challenges and Solutions**
-- **Issues Discussed**:
-  - **Data Reading Issues**:
-    - The team encountered challenges in reading out performance data due to recent changes in how counters are structured within the SDK. These changes, while aimed at improving flexibility and accuracy, introduced complexities that required adjustments to existing tools and workflows.
-  
-  - **Impact on Legacy Tools**:
-    - There was concern about the impact of these changes on legacy tools that were built around the older versions of the Rocprofiler SDK. These tools may not be fully compatible with the new counter structures, leading to potential issues in data collection and analysis.
+    Challenges with Clock Gating:
+        Detailed discussion on the impact of clock gating on counter accuracy and profiling stability.
+        Mention of ongoing efforts to manage and stabilize counter data by controlling clock gating features.
+        Consideration of how to extract and handle clock gating data to ensure reliable performance metrics.
 
-  - **Proposed Solutions**:
-    - The team brainstormed potential solutions, including updating the toolchain to align with the new SDK features. Another proposed solution was the creation of additional support documentation to help developers transition from older versions of the SDK to the current version.
+10. Discussion on PC Sampling and Counter Collection Interference
 
-- **SDK Documentation Reference**:
-  - **Troubleshooting and FAQs**: This section provides guidance on common issues that users may encounter, including those related to the recent changes in the SDK. It offers practical solutions and best practices for adapting tools and workflows to the latest version of the profiler, directly addressing the challenges discussed in the meeting.
+    Key Technical Questions:
+        Detailed discussion on whether PC sampling and counter collection can be performed simultaneously without causing data distortion.
+        Exploration of the potential for timing perturbations during simultaneous data collection operations.
+    Consultation with Experts:
+        Plan to consult with hardware experts (e.g., Vladimir) for deeper insights into the hardware's handling of these operations.
+        Emphasis on gathering more technical details to ensure accurate and reliable profiling results.
 
----
+11. Conclusion and Next Steps
 
-#### **6. Tooling and Environment Variables**
-- **Discussion Points**:
-  - **Interaction with AMD GPUs**:
-    - The discussion focused on how the Rocprofiler SDK interacts with AMD GPUs, particularly in the context of multi-GPU environments. A key point was the role of environment variables in controlling which GPUs are visible to the profiler and how this visibility affects resource allocation and performance analysis.
-  
-  - **ROCR_VISIBLE_DEVICES**:
-    - The `ROCR_VISIBLE_DEVICES` environment variable was highlighted as a critical factor in determining which GPUs are accessible to the profiling tools. This variable can be used to filter out specific GPUs, ensuring that profiling is focused on the GPUs that are actively being used by the application. However, there was concern that improper use of this variable could lead to profiling counters being set up on GPUs that are not in use, potentially leading to resource conflicts and suboptimal performance.
-
-  - **Resource Allocation and Conflicts**:
-    - The meeting emphasized the need for careful management of GPU resources in multi-user environments. Profiling tools must be configured to avoid setting up counters on GPUs that are needed by other processes. This requires a nuanced understanding of how environment variables interact with the ROCm Profiler SDK and how they affect GPU visibility and resource allocation.
-
-- **SDK Documentation Reference**:
-  - **Environment Variables**: The documentation on environment variables explains how these settings control GPU visibility and resource management in the ROCm Profiler SDK. It provides detailed instructions on how to configure environment variables to optimize profiling operations in multi-GPU systems.
-  - **Device Filtering**: This section offers specific guidance on filtering devices to ensure that profiling is limited to the GPUs that are actively being used by the application. It addresses the concerns raised in the meeting about avoiding unnecessary resource allocation and preventing conflicts in multi-user environments.
-
----
-
-#### **7. Closing Remarks**
-- **Final Thoughts**:
-  - **Handling Multi-GPU Systems**:
-    - The meeting concluded with a discussion on the need for clearer and more robust handling of device visibility in multi-GPU systems. This is critical for avoiding conflicts between profiling operations and other processes running on the system. The team recognized the importance of continued collaboration with AMD to address these challenges and ensure that the ROCm Profiler SDK meets the needs of developers working in complex, multi-GPU environments.
-  
-  - **Ongoing Discussions with AMD**:
-    - It was mentioned that ongoing discussions with AMD are focused on resolving the tooling and environment variable issues identified during the meeting. These discussions are aimed at improving the ROCm Profiler SDK’s usability and ensuring that it
-# amdgpu
+    Final Remarks:
+        Summary of key points discussed and the importance of accurate device visibility management in multi-GPU environments.
+        Mention of the L3 slides and notes available for further reference.
+        Plans to verify details about counter collection and PC sampling interference with experts.
+    Follow-Up Actions:
+        Continued discussions with AMD to address the tooling and environment variable issues identified during the session.
+        Emphasis on the need for ongoing collaboration to refine and improve the ROCm Profiler SDK for developer use.
