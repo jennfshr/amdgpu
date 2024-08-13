@@ -1,3 +1,8 @@
+# Working Group Meeting Notes
+## Working Group 2:00 - 3:30 p Tuesday, August 13, 2024
+### AMD GPU Working Session
+
+---
 #### **1. Introduction
 - **SDK Documentation Reference**:
   - **ROCprofiler Overview**: The introductory section of the ROCm Profiler SDK documentation emphasizes the importance of ROCprofiler as a tool for gathering detailed hardware performance counters. This reference is foundational for understanding the scope and utility of ROCm’s profiling capabilities, setting the stage for the technical discussions that followed.
